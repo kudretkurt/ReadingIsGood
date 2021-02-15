@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NServiceBus" Version="7.4.4" />
+      <PackageReference Include="NServiceBus.Callbacks" Version="3.0.0" />
+      <PackageReference Include="NServiceBus.Persistence.Sql" Version="6.0.4" />
+      <PackageReference Include="NServiceBus.RabbitMQ" Version="6.0.0" />
+      <PackageReference Include="NServiceBus.Serilog" Version="7.11.0" />
+      <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Infrastructure\Infrastructure.Shared\Infrastructure.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
