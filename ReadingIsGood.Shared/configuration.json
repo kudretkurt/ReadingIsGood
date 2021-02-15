@@ -1,0 +1,31 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Debug",
+            "System": "Information",
+            "Microsoft": "Information"
+        },
+        "DefaultOutPutPath":"C:\\Temp\\Logs",
+        "ElasticUrl": ""
+    },
+    "Test": {
+        "TestKey": "TestValue",
+        "TestKey2": "TestValue2"
+    },
+    "OrderService": {
+        "CallbacksReceiverEndpointName": "ReadingIsGood.OrderService.Callbacks.Receiver",
+        "CallbacksReceiverErrorQueueName": "ReadingIsGood.OrderService.Callbacks.Error",
+        "EndpointName": "ReadingIsGood.OrderService",
+        "ErrorQueueName": "ReadingIsGood.OrderService.Error"
+    },
+    "ServiceBus": {
+        "DatabaseConnectionString":"Data Source=.;Initial Catalog=ReadingIsGood.ServiceBus;User Id=sa;Password=P@ssw0rd123!;Connect Timeout=30;Encrypt=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=true",
+        "TransportConnectionString":"host=localhost;username=kudret;password=kudret;RequestedHeartbeat=60",
+        "TransportHostName":"localhost",
+        "TransportPassword":"kudret",
+        "TransportUserName":"kudret"
+    },
+    "ReadingIsGoodApi": {
+        "Url": "http://localhost:15001"
+    }
+}
