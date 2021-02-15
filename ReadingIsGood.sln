@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingIsGood.OrderService"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingIsGood.ProductService", "ReadingIsGood.ProductService\ReadingIsGood.ProductService.csproj", "{D49AD7A6-1601-4E21-8322-0305E2A1151C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Shared", "..\Infrastructure\Infrastructure.Shared\Infrastructure.Shared.csproj", "{F7AC7C12-AD1E-4234-BAF5-8116F9097DE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadingIsGood.Shared", "ReadingIsGood.Shared\ReadingIsGood.Shared.csproj", "{51C074CC-25BC-4EEA-92C4-C2040DD28193}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +26,9 @@ Global
 		{D49AD7A6-1601-4E21-8322-0305E2A1151C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D49AD7A6-1601-4E21-8322-0305E2A1151C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D49AD7A6-1601-4E21-8322-0305E2A1151C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7AC7C12-AD1E-4234-BAF5-8116F9097DE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7AC7C12-AD1E-4234-BAF5-8116F9097DE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7AC7C12-AD1E-4234-BAF5-8116F9097DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7AC7C12-AD1E-4234-BAF5-8116F9097DE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51C074CC-25BC-4EEA-92C4-C2040DD28193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51C074CC-25BC-4EEA-92C4-C2040DD28193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51C074CC-25BC-4EEA-92C4-C2040DD28193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51C074CC-25BC-4EEA-92C4-C2040DD28193}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
