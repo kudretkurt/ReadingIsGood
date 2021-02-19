@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ReadingIsGood.API</name>
+    </assembly>
+    <members>
+        <member name="T:ReadingIsGood.API.Controllers.V1.OrderController">
+            <summary>
+                OrderController
+            </summary>
+        </member>
+        <member name="F:ReadingIsGood.API.Controllers.V1.OrderController._endpointInstance">
+            <summary>
+                EndpointInstance(SenderEndpointInstance)
+            </summary>
+        </member>
+        <member name="F:ReadingIsGood.API.Controllers.V1.OrderController._logger">
+            <summary>
+                Logger
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.OrderController.#ctor(Microsoft.Extensions.Logging.ILogger,NServiceBus.IEndpointInstance)">
+            <summary>
+            </summary>
+            <param name="logger"></param>
+            <param name="endpointInstance"></param>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.OrderController.SaveOrder(ReadingIsGood.API.Models.V1.SaveOrderRequestModel)">
+            <summary>
+            Sipariş Kaydetmek için kullanılır
+            </summary>
+            <param name="saveOrderRequestModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.OrderController.GetOrders(ReadingIsGood.API.Models.PaginationModel)">
+            <summary>
+            Müşteriye ait siparişleri(sipariş detayları ile birlikte) listelemek için kullanılır.
+            </summary>
+            <param name="paginationModel"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ReadingIsGood.API.Controllers.V1.ProductController">
+            <summary>
+                ProductController
+            </summary>
+        </member>
+        <member name="F:ReadingIsGood.API.Controllers.V1.ProductController._endpointInstance">
+            <summary>
+                EndpointInstance(SenderEndpointInstance)
+            </summary>
+        </member>
+        <member name="F:ReadingIsGood.API.Controllers.V1.ProductController._logger">
+            <summary>
+                Logger
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.ProductController.#ctor(Microsoft.Extensions.Logging.ILogger,NServiceBus.IEndpointInstance)">
+            <summary>
+            </summary>
+            <param name="logger"></param>
+            <param name="endpointInstance"></param>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.ProductController.UpdateStock(ReadingIsGood.API.Models.V1.UpdateStockRequestModel)">
+            <summary>
+                Bir Ürüne Ait Stok Bilgisini Güncellemek için bu method kullanılır.
+            </summary>
+            <param name="updateStockRequestModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ReadingIsGood.API.Controllers.V1.ProductController.SaveProduct(ReadingIsGood.API.Models.V1.SaveProductRequestModel)">
+            <summary>
+                Ürün kaydetmek için bu method kullanılır.
+            </summary>
+            <param name="saveProductRequestModel"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.ErrorModel.FieldName">
+            <summary>
+                FieldName
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.ErrorModel.Message">
+            <summary>
+                Message
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.ErrorResponse.Errors">
+            <summary>
+                Errors
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Models.V1.ProductInformationInOrderModel">
+            <summary>
+                Sipariş verirken ürüne ait bilgileri içeren object
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.ProductInformationInOrderModel.Id">
+            <summary>
+                Ürün id Bilgisi
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.ProductInformationInOrderModel.Name">
+            <summary>
+                Ürün adı
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.ProductInformationInOrderModel.Price">
+            <summary>
+                Ürün Fiyatı
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.ProductInformationInOrderModel.Count">
+            <summary>
+                Ürün Adedi
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Models.V1.SaveOrderRequestModel">
+            <summary>
+                Sİpariş bilgileri
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveOrderRequestModel.DeliveryAddress">
+            <summary>
+                Sİparişin teslim edileceği adres bilgisi
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveOrderRequestModel.InvoiceAddress">
+            <summary>
+                Sipariş'e ait faturanın teslim edileceği adres bilgisi
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveOrderRequestModel.Products">
+            <summary>
+                Sipariş içindeki ürünlere ait bilgiler
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Models.V1.SaveProductRequestModel">
+            <summary>
+                SaveProductRequestModel
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveProductRequestModel.Name">
+            <summary>
+                Ürün ismi
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveProductRequestModel.Price">
+            <summary>
+                Ürün ücreti
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.SaveProductRequestModel.Stock">
+            <summary>
+                Ürün stok bilgisi
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Models.V1.UpdateStockRequestModel">
+            <summary>
+                UpdateStockRequestModel
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.UpdateStockRequestModel.Stock">
+            <summary>
+                Stock (Pozitif yada negatif değer alabilir. Her durumda o anki stok değeri ile girilen değer toplanır.)
+            </summary>
+        </member>
+        <member name="P:ReadingIsGood.API.Models.V1.UpdateStockRequestModel.ProductId">
+            <summary>
+                İlgili ürünün id'si
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Validators.PaginationModelValidator">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Validators.PaginationModelValidator.#ctor">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Validators.ProductInformationInOrderModelValidators">
+            <summary>
+                ProductInformationInOrderModelValidators
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Validators.ProductInformationInOrderModelValidators.#ctor">
+            <summary>
+                ProductInformationInOrderModelValidators
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Validators.SaveOrderRequestModelValidators">
+            <summary>
+                SaveOrderRequestModelValidators
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Validators.SaveOrderRequestModelValidators.#ctor">
+            <summary>
+                SaveOrderRequestModelValidators
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Validators.SaveProductRequestModelValidators">
+            <summary>
+                SaveProductRequestModelValidators
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Validators.SaveProductRequestModelValidators.#ctor">
+            <summary>
+                SaveProductRequestModelValidators(ctor)
+            </summary>
+        </member>
+        <member name="T:ReadingIsGood.API.Validators.UpdateStockRequestModelValidators">
+            <summary>
+                UpdateStockRequestModelValidators
+            </summary>
+        </member>
+        <member name="M:ReadingIsGood.API.Validators.UpdateStockRequestModelValidators.#ctor">
+            <summary>
+                UpdateStockRequestModelValidators
+            </summary>
+        </member>
+    </members>
+</doc>
