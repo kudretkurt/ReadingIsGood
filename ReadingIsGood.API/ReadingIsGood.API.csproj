@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <DocumentationFile>bin\Debug\ReadingIsGood.API.xml</DocumentationFile>
+      <DocumentationFile>ReadingIsGood.API.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -13,17 +13,28 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.5.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" NoWarn="NU1605" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" NoWarn="NU1605" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Api.Analyzers" Version="2.2.6" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+        <PackageReference Include="NServiceBus" Version="7.4.4" />
+        <PackageReference Include="NServiceBus.Callbacks" Version="3.0.0" />
+        <PackageReference Include="NServiceBus.RabbitMQ" Version="6.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\Infrastructure.Shared\Infrastructure.Shared.csproj" />
+      <ProjectReference Include="..\ReadingIsGood.OrderService.Contracts\ReadingIsGood.OrderService.Contracts.csproj" />
+      <ProjectReference Include="..\ReadingIsGood.ProductService.Contracts\ReadingIsGood.ProductService.Contracts.csproj" />
       <ProjectReference Include="..\ReadingIsGood.Shared\ReadingIsGood.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="ReadingIsGood.API.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

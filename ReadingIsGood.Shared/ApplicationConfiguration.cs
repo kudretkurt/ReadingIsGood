@@ -7,31 +7,30 @@ namespace ReadingIsGood.Shared
 {
     public sealed class ApplicationConfiguration
     {
-        private static readonly Lazy<ApplicationConfiguration> Lazy =
-            new Lazy<ApplicationConfiguration>(() => new ApplicationConfiguration());
-
-        public static ApplicationConfiguration Instance => Lazy.Value;
-        private IConfiguration Configuration { get; }
-        private readonly string _configPath;
         private const string ConfigFileName = "configuration.json";
         private const string ConfigFilePathEnvironmentVariable = "configuration_path";
+
+        private static readonly Lazy<ApplicationConfiguration> Lazy =
+            new(() => new ApplicationConfiguration());
+
+        private readonly string _configPath;
 
         private ApplicationConfiguration()
         {
             _configPath = GetConfigurationPath();
 
             var builder = new ConfigurationBuilder()
-                .AddJsonFile(_configPath, optional: false, reloadOnChange: true);
+                .AddJsonFile(_configPath, false, true);
 
             Configuration = builder.Build();
         }
 
+        public static ApplicationConfiguration Instance => Lazy.Value;
+        private IConfiguration Configuration { get; }
+
         public T GetSection<T>(string configurationKey) where T : new()
         {
-            if (string.IsNullOrEmpty(configurationKey))
-            {
-                throw new ArgumentNullException($"{nameof(configurationKey)}");
-            }
+            if (string.IsNullOrEmpty(configurationKey)) throw new ArgumentNullException($"{nameof(configurationKey)}");
 
             try
             {
@@ -55,29 +54,19 @@ namespace ReadingIsGood.Shared
             try
             {
                 if (Configuration[configurationKey] == null && defaultValue == default)
-                {
                     throw new ArgumentNullException(
                         $"Configuration Value could not find for the give key:{configurationKey}. Configuration Location: {_configPath}");
-                }
 
                 if (Configuration[configurationKey] == null && defaultValue != default)
-                {
                     return (T) Convert.ChangeType(defaultValue, typeof(T));
-                }
 
                 if (typeof(T).IsEnum)
-                {
                     result = (T) Enum.Parse(typeof(T), Configuration[configurationKey]);
-                }
                 else
-                {
                     result = (T) Convert.ChangeType(Configuration[configurationKey], typeof(T));
-                }
 
                 if (string.IsNullOrEmpty(Convert.ToString(result, CultureInfo.InvariantCulture)))
-                {
                     throw new ArgumentNullException(nameof(configurationKey));
-                }
             }
             catch (InvalidCastException e)
             {

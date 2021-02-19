@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Infrastructure.Shared;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
+using ReadingIsGood.Shared;
+using ReadingIsGood.Shared.CommonTypes;
 
 namespace ReadingIsGood.OrderService
 {
@@ -10,13 +11,20 @@ namespace ReadingIsGood.OrderService
     {
         private static IEndpointInstance _orderServiceCallbacksEndpoint;
         private static IEndpointInstance _orderServiceEndpoint;
-        private static ILogger _logger;
+        public static ILogger Logger;
+        public static IMongoDbSettings MongoDbSettings;
 
         private static void Main(string[] args)
         {
             //Mongo Database Password:a6KrZ3DOmUBvwSTz
             //https://cloud.mongodb.com/v2/5fdf9b8d4780eb4f6fe21924#security/database/users
-            _logger = LoggingMechanism.CreateLogger("orderService");
+            Logger = LoggingMechanism.CreateLogger("orderService");
+            MongoDbSettings = new MongoDbSettings
+            {
+                ConnectionString =
+                    ApplicationConfiguration.Instance.GetValue<string>("OrderService:MongoDbConnectionString"),
+                DatabaseName = ApplicationConfiguration.Instance.GetValue<string>("OrderService:MongoDbDatabaseName")
+            };
             InitializeEndpoint().GetAwaiter().GetResult();
         }
 
@@ -25,17 +33,17 @@ namespace ReadingIsGood.OrderService
             try
             {
                 _orderServiceEndpoint = await Endpoint
-                    .Start(EndpointConfigurations.GetOrderServiceEndpointConfiguration(LoggingMechanism.Logger))
+                    .Start(EndpointConfigurations.GetOrderServiceEndpointConfiguration())
                     .ConfigureAwait(false);
                 _orderServiceCallbacksEndpoint = await Endpoint
-                    .Start(EndpointConfigurations.GetCallbackReceiverEndpointConfiguration(LoggingMechanism.Logger))
+                    .Start(EndpointConfigurations.GetCallbackReceiverEndpointConfiguration())
                     .ConfigureAwait(false);
 
                 while (true) Console.Read();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "OrderService catch error");
+                Logger.LogError(e, "OrderService catch error");
             }
             finally
             {

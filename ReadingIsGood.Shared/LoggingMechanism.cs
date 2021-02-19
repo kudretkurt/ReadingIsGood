@@ -14,6 +14,16 @@ namespace ReadingIsGood.Shared
     {
         private static ILogger _logger;
 
+        public static ILogger Logger
+        {
+            get
+            {
+                if (_logger == null) throw new ArgumentNullException("Firstly You have to call CreateLogger");
+
+                return _logger;
+            }
+        }
+
         private static void InitializeLogger(string contextName, bool enableFileLog = false,
             bool enableConsoleLog = true, bool enableElasticLog = false)
         {
@@ -37,13 +47,9 @@ namespace ReadingIsGood.Shared
                 );
             }
 
-            if (enableConsoleLog)
-            {
-                loggerConfiguration.WriteTo.Console(logLevel);
-            }
+            if (enableConsoleLog) loggerConfiguration.WriteTo.Console(logLevel);
 
             if (enableElasticLog)
-            {
                 loggerConfiguration.WriteTo.Elasticsearch(
                     new ElasticsearchSinkOptions(
                         new Uri(ApplicationConfiguration.Instance.GetValue<string>("Logging:ElasticUrl")))
@@ -53,7 +59,6 @@ namespace ReadingIsGood.Shared
                         AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
                         MinimumLogEventLevel = logLevel
                     });
-            }
 
             Log.Logger = loggerConfiguration.CreateLogger();
 
@@ -105,19 +110,6 @@ namespace ReadingIsGood.Shared
         {
             InitializeLogger(contextName, enableFileLog, enableConsoleLog, enableElasticLog);
             return new SerilogLoggerProvider(Log.Logger).CreateLogger(contextName);
-        }
-
-        public static Serilog.ILogger Logger
-        {
-            get
-            {
-                if (_logger == null)
-                {
-                    throw new ArgumentNullException("Firstly You have to call CreateLogger");
-                }
-
-                return _logger;
-            }
         }
     }
 }

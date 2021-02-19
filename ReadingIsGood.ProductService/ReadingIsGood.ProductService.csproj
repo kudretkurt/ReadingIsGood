@@ -6,7 +6,33 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ReadingIsGood.OrderService.Contracts\ReadingIsGood.OrderService.Contracts.csproj" />
+      <ProjectReference Include="..\ReadingIsGood.ProductService.Contracts\ReadingIsGood.ProductService.Contracts.csproj" />
       <ProjectReference Include="..\ReadingIsGood.Shared\ReadingIsGood.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="NServiceBus" Version="7.4.4" />
+      <PackageReference Include="NServiceBus.Callbacks" Version="3.0.0" />
+      <PackageReference Include="NServiceBus.Persistence.Sql" Version="6.0.4" />
+      <PackageReference Include="NServiceBus.RabbitMQ" Version="6.0.0" />
+      <PackageReference Include="NServiceBus.Serilog" Version="7.11.0" />
+      <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Handlers\EventHandlers" />
     </ItemGroup>
 
 </Project>

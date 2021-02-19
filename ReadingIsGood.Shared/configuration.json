@@ -1,31 +1,47 @@
 {
-    "Logging": {
-        "LogLevel": {
-            "Default": "Debug",
-            "System": "Information",
-            "Microsoft": "Information"
-        },
-        "DefaultOutPutPath":"C:\\Temp\\Logs",
-        "ElasticUrl": ""
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
     },
-    "Test": {
-        "TestKey": "TestValue",
-        "TestKey2": "TestValue2"
-    },
-    "OrderService": {
-        "CallbacksReceiverEndpointName": "ReadingIsGood.OrderService.Callbacks.Receiver",
-        "CallbacksReceiverErrorQueueName": "ReadingIsGood.OrderService.Callbacks.Error",
-        "EndpointName": "ReadingIsGood.OrderService",
-        "ErrorQueueName": "ReadingIsGood.OrderService.Error"
-    },
-    "ServiceBus": {
-        "DatabaseConnectionString":"Data Source=.;Initial Catalog=ReadingIsGood.ServiceBus;User Id=sa;Password=P@ssw0rd123!;Connect Timeout=30;Encrypt=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=true",
-        "TransportConnectionString":"host=localhost;username=kudret;password=kudret;RequestedHeartbeat=60",
-        "TransportHostName":"localhost",
-        "TransportPassword":"kudret",
-        "TransportUserName":"kudret"
-    },
-    "ReadingIsGoodApi": {
-        "Url": "http://localhost:15001"
+    "DefaultOutPutPath": "C:\\Temp\\Logs",
+    "ElasticUrl": ""
+  },
+  "Test": {
+    "TestKey": "TestValue",
+    "TestKey2": "TestValue2"
+  },
+  "OrderService": {
+    "CallbacksReceiverEndpointName": "ReadingIsGood.OrderService.Callbacks.Receiver",
+    "CallbacksReceiverErrorQueueName": "ReadingIsGood.OrderService.Callbacks.Error",
+    "EndpointName": "ReadingIsGood.OrderService",
+    "ErrorQueueName": "ReadingIsGood.OrderService.Error",
+    "MongoDbConnectionString": "mongodb+srv://sa:a6KrZ3DOmUBvwSTz@clusterkklocal.zdk2r.mongodb.net/ReadingIsGood?retryWrites=true&w=majority",
+    "MongoDbDatabaseName": "ReadingIsGood"
+  },
+  "ProductService": {
+    "CallbacksReceiverEndpointName": "ReadingIsGood.ProductService.Callbacks.Receiver",
+    "CallbacksReceiverErrorQueueName": "ReadingIsGood.ProductService.Callbacks.Error",
+    "EndpointName": "ReadingIsGood.ProductService",
+    "ErrorQueueName": "ReadingIsGood.ProductService.Error",
+    "DatabaseConnectionString": "Data Source=localhost;Initial Catalog=ReadingIsGood.ProductService;User Id=sa;Password=P@ssw0rd123!;Connect Timeout=30;Encrypt=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=true",
+    "RetryPolicy": {
+      "HeaderNames": {
+        "UpdateStockInProduct": "USIP"
+      }
     }
+  },
+  "ServiceBus": {
+    "DatabaseConnectionString": "Data Source=.;Initial Catalog=ReadingIsGood.ServiceBus;User Id=sa;Password=P@ssw0rd123!;Connect Timeout=30;Encrypt=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=true",
+    "TransportConnectionString": "host=localhost;username=kudret;password=kudret;RequestedHeartbeat=60",
+    "TransportHostName": "localhost",
+    "TransportPassword": "kudret",
+    "TransportUserName": "kudret"
+  },
+  "ReadingIsGoodApi": {
+    "Url": "http://localhost:15001",
+    "CallbacksSenderEndpointName": "ReadingIsGood.API.Callbacks.Sender",
+    "CallbacksSenderErrorQueueName": "ReadingIsGood.API.Callbacks.Sender"
+  }
 }

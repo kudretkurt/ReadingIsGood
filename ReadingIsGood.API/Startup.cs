@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -16,8 +15,13 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using NServiceBus;
+using NServiceBus.Features;
+using ReadingIsGood.API.Filters;
+using ReadingIsGood.API.Handlers;
+using ReadingIsGood.Shared;
+using Endpoint = NServiceBus.Endpoint;
 
 namespace ReadingIsGood.API
 {
@@ -34,19 +38,23 @@ namespace ReadingIsGood.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(setup =>
-            {
-                setup.ReturnHttpNotAcceptable = true;
+                {
+                    setup.ReturnHttpNotAcceptable = true;
 
-                setup.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-                setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                    setup.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                    setup.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
 
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status422UnprocessableEntity));
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status401Unauthorized));
-                setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
-            });
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status200OK));
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status404NotFound));
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status422UnprocessableEntity));
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status401Unauthorized));
+                    setup.Filters.Add(new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+
+                    setup.Filters.Add<ValidationFilter>();
+                })
+                .AddFluentValidation(configuration =>
+                    configuration.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             services.AddControllers();
 
@@ -67,25 +75,23 @@ namespace ReadingIsGood.API
             services.AddSwaggerGen(setupAction =>
             {
                 foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-                {
                     setupAction.SwaggerDoc($"ReadingIsGood.API{description.GroupName}",
                         new OpenApiInfo
                         {
                             Title = "ReadingIsGood.API",
                             Version = description.ApiVersion.ToString(),
                             Description = "ReadingIsGood.API Description",
-                            Contact = new OpenApiContact()
+                            Contact = new OpenApiContact
                             {
                                 Email = "kudretkrt@gmail.com",
                                 Name = "Kudret Kurt"
                             },
-                            License = new OpenApiLicense()
+                            License = new OpenApiLicense
                             {
                                 Name = "MIT License",
                                 Url = new Uri("https://opensource.org/licenses/MIT")
                             }
                         });
-                }
 
                 setupAction.DocInclusionPredicate((documentName, apiDescription) =>
                 {
@@ -93,16 +99,11 @@ namespace ReadingIsGood.API
                         apiDescription.ActionDescriptor.GetApiVersionModel(ApiVersionMapping.Explicit |
                                                                            ApiVersionMapping.Implicit);
 
-                    if (actionApiVersionModel == null)
-                    {
-                        return true;
-                    }
+                    if (actionApiVersionModel == null) return true;
 
                     if (actionApiVersionModel.DeclaredApiVersions.Any())
-                    {
                         return actionApiVersionModel.DeclaredApiVersions.Any(v =>
                             $"ReadingIsGood.APIv{v.ToString()}" == documentName);
-                    }
 
                     return actionApiVersionModel.ImplementedApiVersions.Any(v =>
                         $"ReadingIsGood.APIv{v.ToString()}" == documentName);
@@ -131,28 +132,72 @@ namespace ReadingIsGood.API
                         new string[] { }
                     }
                 });
+            });
+
+            services.AddSwaggerGen(setupAction =>
+            {
+                setupAction.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ReadingIsGood.API",
+                    Version = "v1"
+                });
 
                 var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlCommentsPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-
                 setupAction.IncludeXmlComments(xmlCommentsPath);
             });
+
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            services.AddSingleton(setup =>
+            {
+                var endpointName =
+                    ApplicationConfiguration.Instance.GetValue<string>("ReadingIsGoodApi:CallbacksSenderEndpointName");
+                var errorQueueName =
+                    ApplicationConfiguration.Instance.GetValue<string>(
+                        "ReadingIsGoodApi:CallbacksSenderErrorQueueName");
+
+                var endpointConfiguration = new EndpointConfiguration(endpointName);
+
+
+                endpointConfiguration.EnableInstallers();
+                endpointConfiguration.SendFailedMessagesTo(errorQueueName);
+                endpointConfiguration.EnableCallbacks();
+                endpointConfiguration.MakeInstanceUniquelyAddressable(Environment.MachineName);
+
+                endpointConfiguration.DisableFeature<AutoSubscribe>();
+
+                endpointConfiguration.Recoverability()
+                    .Immediate(
+                        immediate => { immediate.NumberOfRetries(0); })
+                    .Delayed(
+                        delayed => { delayed.NumberOfRetries(0); });
+
+
+                endpointConfiguration.UseTransport<RabbitMQTransport>()
+                    .ConnectionString(
+                        ApplicationConfiguration.Instance.GetValue<string>("ServiceBus:TransportConnectionString"))
+                    .UseConventionalRoutingTopology();
+
+
+                return Endpoint.Start(endpointConfiguration).GetAwaiter().GetResult();
+            });
+
+            services.AddSingleton(setup => LoggingMechanism.CreateLogger("ReadingIsGoodAPI", enableConsoleLog: true));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
             IApiVersionDescriptionProvider apiVersionDescriptionProvider)
         {
-            app.UseMiddleware<BasicAuthMiddleware>();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -163,10 +208,8 @@ namespace ReadingIsGood.API
             app.UseSwaggerUI(setupAction =>
             {
                 foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-                {
                     setupAction.SwaggerEndpoint($"/swagger/ReadingIsGood.API{description.GroupName}/swagger.json",
                         $"{description.GroupName.ToUpperInvariant()}");
-                }
 
                 setupAction.RoutePrefix = "";
             });

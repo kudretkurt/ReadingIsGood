@@ -1,18 +1,16 @@
 using System;
 using System.Data.SqlClient;
-using Infrastructure.Shared;
-using Microsoft.Extensions.Logging;
 using NServiceBus;
 using NServiceBus.Features;
-using NServiceBus.Logging;
-using NServiceBus.Serilog;
-using Serilog.Extensions.Logging;
+using ReadingIsGood.OrderService.Entities;
+using ReadingIsGood.OrderService.Repositories;
+using ReadingIsGood.Shared;
 
 namespace ReadingIsGood.OrderService
 {
     public static class EndpointConfigurations
     {
-        public static EndpointConfiguration GetCallbackReceiverEndpointConfiguration(Serilog.ILogger logger)
+        public static EndpointConfiguration GetCallbackReceiverEndpointConfiguration()
         {
             var endpointName =
                 ApplicationConfiguration.Instance.GetValue<string>("OrderService:CallbacksReceiverEndpointName");
@@ -25,7 +23,7 @@ namespace ReadingIsGood.OrderService
 
             var endpointConfiguration = new EndpointConfiguration(endpointName);
             endpointConfiguration.SendFailedMessagesTo(errorQueueName);
-            endpointConfiguration.EnableCallbacks(makesRequests: true);
+            endpointConfiguration.EnableCallbacks();
             endpointConfiguration.EnableInstallers();
             endpointConfiguration.PurgeOnStartup(true);
             endpointConfiguration.MakeInstanceUniquelyAddressable(Environment.MachineName);
@@ -35,9 +33,6 @@ namespace ReadingIsGood.OrderService
             transport.DisableRemoteCertificateValidation();
 
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
-            
-            var factory = LogManager.Use<SerilogFactory>();
-            factory.WithLogger(logger);
 
             var recoverability = endpointConfiguration.Recoverability();
             recoverability.Immediate(immediate => { immediate.NumberOfRetries(0); });
@@ -45,11 +40,23 @@ namespace ReadingIsGood.OrderService
 
             endpointConfiguration.DisableFeature<AutoSubscribe>();
 
+            endpointConfiguration.RegisterComponents(configureComponents =>
+            {
+                configureComponents.ConfigureComponent(() => Program.Logger, DependencyLifecycle.SingleInstance);
+
+                configureComponents.ConfigureComponent(() => Program.MongoDbSettings,
+                    DependencyLifecycle.SingleInstance);
+
+                configureComponents.ConfigureComponent<IMongoRepository<Order>>(
+                    () => new MongoRepository<Order>(Program.MongoDbSettings),
+                    DependencyLifecycle.InstancePerUnitOfWork);
+            });
+
 
             return endpointConfiguration;
         }
 
-        public static EndpointConfiguration GetOrderServiceEndpointConfiguration(Serilog.ILogger logger)
+        public static EndpointConfiguration GetOrderServiceEndpointConfiguration()
         {
             var endpointName =
                 ApplicationConfiguration.Instance.GetValue<string>("OrderService:EndpointName");
@@ -68,9 +75,6 @@ namespace ReadingIsGood.OrderService
             endpointConfiguration.EnableInstallers();
             endpointConfiguration.SendFailedMessagesTo(errorQueueName);
 
-            var factory = LogManager.Use<SerilogFactory>();
-            factory.WithLogger(logger);
-
             var transport = endpointConfiguration.UseTransport<RabbitMQTransport>().UseConventionalRoutingTopology();
             transport.ConnectionString(transportConnectionString);
             transport.DisableRemoteCertificateValidation();
@@ -88,6 +92,19 @@ namespace ReadingIsGood.OrderService
             });
 
             endpointConfiguration.DisableFeature<AutoSubscribe>();
+
+
+            endpointConfiguration.RegisterComponents(configureComponents =>
+            {
+                configureComponents.ConfigureComponent(() => Program.Logger, DependencyLifecycle.SingleInstance);
+
+                configureComponents.ConfigureComponent(() => Program.MongoDbSettings,
+                    DependencyLifecycle.SingleInstance);
+
+                configureComponents.ConfigureComponent<IMongoRepository<Order>>(
+                    () => new MongoRepository<Order>(Program.MongoDbSettings),
+                    DependencyLifecycle.InstancePerUnitOfWork);
+            });
 
 
             return endpointConfiguration;
